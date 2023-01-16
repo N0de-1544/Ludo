@@ -18,17 +18,40 @@ imboard = [['*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'
 
 
 class Piece:
-    def __init__(self, coords, color):
-        self.y, self.x = coords
+    def __init__(self, startpos, color):
+        self.y, self.x = startpos
+        self.revspot = startpos
         self.color = color
         self.active = False
+        self.gone_through = 0
+        # self.limit = 58
 
     def activate(self):
         self.active = True
 
     def move(self, tiles):
-        if imboard[self.y][self.x]
-
+        if self.active is False:
+            return None
+        for i in range(tiles):
+            if self.x - 7 > 0:
+                if imboard[self.x][self.y - 1] == ' ':
+                    self.y -= 1
+                elif self.y - 7 < 0:
+                    if imboard[self.x + 1][self.y] == ' ':
+                        self.x += 1
+                elif self.y - 7 > 0:
+                    if imboard[self.x - 1][self.y] == ' ':
+                        self.x -= 1
+            elif self.x - 7 < 0:
+                if imboard[self.x][self.y + 1] == ' ':
+                    self.y += 1
+                elif self.y - 7 < 0:
+                    if imboard[self.x + 1][self.y] == ' ':
+                        self.x += 1
+                elif self.y - 7 > 0:
+                    if imboard[self.x - 1][self.y] == ' ':
+                        self.x -= 1
+            self.gone_through += 1
 
 
 

@@ -2,6 +2,7 @@ import pygame
 from pygame import event
 from math import floor
 
+
 class Board:
     def __init__(self):
         self.width = 15
