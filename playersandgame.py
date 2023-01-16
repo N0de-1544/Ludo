@@ -53,10 +53,11 @@ class Piece:
                         self.x -= 1
             self.gone_through += 1
 
+    def getpiecestate(self):
+        return self.y, self.x, self.color
 
 
-
-players = {'b1': (11, 2), 'b2': (11, 5), 'b3': (14, 2), 'b4': (14, 5),
-          'y1': (2, 2), 'y2': (2, 5), 'y3': (5, 2), 'y4': (5, 5),
-          'g1': (2, 11), 'g2': (2, 14), 'g3': (5, 11), 'g4': (5, 14),
-          'r1': (11, 11), 'r2': (11, 14), 'r3': (14, 11), 'r4': (11, 11)}
+players = [Piece((11, 2), 'g'), Piece((11, 5), 'g'), Piece((14, 2), 'g'), Piece((14, 5), 'g'),
+           Piece((2, 2), 'y'), Piece((2, 5), 'y'), Piece((5, 2), 'y'), Piece((5, 5), 'y'),
+           Piece((2, 11), 'b'), Piece((2, 14), 'b'), Piece((5, 11), 'b'), Piece((5, 14), 'b'),
+           Piece((11, 11), 'r'), Piece((11, 14), 'r'), Piece((14, 11), 'r'), Piece((14, 14), 'r')]

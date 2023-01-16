@@ -1,6 +1,11 @@
 import pygame
 from pygame import event
 from math import floor
+import playersandgame
+
+
+def getplayers():
+    return list(map(lambda x: x.getpiecestate(), playersandgame.players))
 
 
 class Board:
@@ -83,6 +88,11 @@ class Board:
                                                         self.top + (i * self.cell_size),
                                                         self.cell_size,
                                                         self.cell_size))
+        for par in getplayers():
+            pygame.draw.circle(scr, self.colordict[par[2]],
+                               (((par[0] - 0.5) * self.cell_size) + self.top,
+                                ((par[1] - 0.5) * self.cell_size) + self.left),
+                               (self.cell_size - 1) // 2)
 
 
 
