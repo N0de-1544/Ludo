@@ -8,6 +8,8 @@ def getplayers():
     return list(map(lambda x: x.getpiecestate(), playersandgame.players))
 
 
+
+
 class Board:
     def __init__(self):
         self.width = 15
@@ -28,7 +30,7 @@ class Board:
                       ['1b', '', '1b', '1b', '', '1b', 'sb', 'hb', '', '1r', '', '1r', '1r', '', '1r'],
                       ['1b', '1b', '1b', '1b', '1b', '1b', '', '', '', '1r', '1r', '1r', '1r', '1r', '1r']]
         self.left = 75
-        self.top = 75
+        self.top = 25
         self.cell_size = 30
         self.colordict = {'y': (255, 222, 21), 'g': (4, 150, 69),
                           'b':  (18, 149, 231), 'r': (232, 21, 30)}
@@ -50,7 +52,8 @@ class Board:
         pass
 
     def get_click(self, mouse_pos):
-        pass
+        cell = self.get_cell(mouse_pos)
+        self.on_click(cell)
 
     def render(self, scr):
         for i in range(self.height):
@@ -90,24 +93,31 @@ class Board:
                                                         self.cell_size))
         for par in getplayers():
             pygame.draw.circle(scr, self.colordict[par[2]],
-                               (((par[0] - 0.5) * self.cell_size) + self.top,
-                                ((par[1] - 0.5) * self.cell_size) + self.left),
+                               (((par[0] - 0.5) * self.cell_size) + self.left,
+                                ((par[1] - 0.5) * self.cell_size) + self.top),
                                (self.cell_size - 1) // 2)
 
 
 
 
-
-board = Board()
-screen = pygame.display.set_mode((600, 600))
-running = True
-pygame.display.set_caption("Ludo")
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            print(board.get_click(event.pos))
-    screen.fill((255, 255, 255))
-    board.render(screen)
-    pygame.display.flip()
+if __name__ == '__main__':
+    board = Board()
+    screen = pygame.display.set_mode((600, 600))
+    running = True
+    fps = 50
+    v = 10
+    clock = pygame.time.Clock()
+    pygame.display.set_caption("Ludo")
+    rolling = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                print(board.get_click(event.pos))
+                rolling = False
+        if rolling:
+            pass
+        screen.fill((255, 255, 255))
+        board.render(screen)
+        pygame.display.flip()
