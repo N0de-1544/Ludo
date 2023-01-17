@@ -1,7 +1,11 @@
 import pygame
 from pygame import event
 from math import floor
+from random import randint
+import playersandgame
 
+def getplayersdata():
+    return list(map(lambda x: x.getpar(), playersandgame.players))
 
 class Board:
     def __init__(self):
@@ -23,7 +27,7 @@ class Board:
                       ['1b', '', '1b', '1b', '', '1b', 'sb', 'hb', '', '1r', '', '1r', '1r', '', '1r'],
                       ['1b', '1b', '1b', '1b', '1b', '1b', '', '', '', '1r', '1r', '1r', '1r', '1r', '1r']]
         self.left = 75
-        self.top = 75
+        self.top = 25
         self.cell_size = 30
         self.colordict = {'y': (255, 222, 21), 'g': (4, 150, 69),
                           'b':  (18, 149, 231), 'r': (232, 21, 30)}
@@ -83,6 +87,10 @@ class Board:
                                                         self.top + (i * self.cell_size),
                                                         self.cell_size,
                                                         self.cell_size))
+        for i in getplayersdata():
+            pygame.draw.circle(scr, self.colordict[i[2]],
+            ((i[0] - 0.5) * self.cell_size + self.left, (i[1] - 0.5) * self.cell_size + self.top),
+                               (self.cell_size - 1) // 2)
 
 
 
@@ -92,12 +100,21 @@ board = Board()
 screen = pygame.display.set_mode((600, 600))
 running = True
 pygame.display.set_caption("Ludo")
+fps = 10
+clock = pygame.time.Clock()
+rolling = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             print(board.get_click(event.pos))
+    if rolling:
+        dices = pygame.image.load('dice.png')
+        for i in range(clock.tick(fps)):
+            val = randint(0, 5)
+            screen.blit(dices, (275, 500), (val * 54, 0, (val + 1) * 54,  55))
+            pygame.display.flip()
     screen.fill((255, 255, 255))
     board.render(screen)
     pygame.display.flip()
