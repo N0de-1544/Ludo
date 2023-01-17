@@ -4,8 +4,13 @@ from math import floor
 from random import randint
 import playersandgame
 
-def getplayersdata():
-    return list(map(lambda x: x.getpar(), playersandgame.players))
+
+def getplayersdata(type=0):
+    if type == 0:
+        return list(map(lambda x: x.getpar(), playersandgame.players))
+    elif type == 1:
+        return {(i[0], i[1]): i[2] for i in list(map(lambda x: x.getpar(), playersandgame.players))}
+
 
 class Board:
     def __init__(self):
@@ -30,8 +35,7 @@ class Board:
         self.top = 25
         self.cell_size = 30
         self.colordict = {'y': (255, 222, 21), 'g': (4, 150, 69),
-                          'b':  (18, 149, 231), 'r': (232, 21, 30)}
-
+                          'b': (18, 149, 231), 'r': (232, 21, 30)}
 
     def set_view(self, left, top, cell_size):
         self.left = left
@@ -45,19 +49,28 @@ class Board:
         else:
             return None
 
-    def on_click(self, cell_coords):
-        pass
+    def on_click(self, cell_coords, movement):
+        if (cell_coords[0] + 1, cell_coords[1] + 1) in list(map(lambda x: (x[0], x[1]), getplayersdata())):
+            conplayer = 0
+            for i in range(12):
+                if (cell_coords[0] + 1, cell_coords[1] + 1) == playersandgame.players[i].getcoords():
+                    conplayer = i
+            if (playersandgame.order[playersandgame.whoseturn]
+                    == playersandgame.players[conplayer].getcolor()):
+                playersandgame.players[conplayer].move(movement)
+            pass
 
-    def get_click(self, mouse_pos):
-        pass
+    def get_click(self, mouse_pos, movement):
+        self.on_click(self.get_cell(mouse_pos), movement)
+        # return self.get_cell(mouse_pos)
 
     def render(self, scr):
         for i in range(self.height):
             for j in range(self.width):
                 pygame.draw.rect(scr, 'black', (self.left + (j * self.cell_size),
-                                 self.top + (i * self.cell_size),
-                                 self.cell_size,
-                                 self.cell_size), 1)
+                                                self.top + (i * self.cell_size),
+                                                self.cell_size,
+                                                self.cell_size), 1)
                 pygame.draw.rect(scr, 'white',
                                  (self.left + (j * self.cell_size) + 1,
                                   self.top + (i * self.cell_size) + 1,
@@ -67,9 +80,9 @@ class Board:
                     if self.board[i][j][0] == '1':
                         pygame.draw.rect(scr, self.colordict[self.board[i][j][1]],
                                          (self.left + (j * self.cell_size),
-                                                        self.top + (i * self.cell_size),
-                                                        self.cell_size,
-                                                        self.cell_size))
+                                          self.top + (i * self.cell_size),
+                                          self.cell_size,
+                                          self.cell_size))
                     elif self.board[i][j][0] == 'h':
                         pygame.draw.rect(scr, self.colordict[self.board[i][j][1]],
                                          (self.left + (j * self.cell_size) + 1,
@@ -88,33 +101,43 @@ class Board:
                                                         self.cell_size,
                                                         self.cell_size))
         for i in getplayersdata():
+            pygame.draw.circle(scr, 'black',
+                               ((i[0] - 0.5) * self.cell_size + self.left, (i[1] - 0.5) * self.cell_size + self.top),
+                               (self.cell_size) // 2, 1)
             pygame.draw.circle(scr, self.colordict[i[2]],
-            ((i[0] - 0.5) * self.cell_size + self.left, (i[1] - 0.5) * self.cell_size + self.top),
+                               ((i[0] - 0.5) * self.cell_size + self.left, (i[1] - 0.5) * self.cell_size + self.top),
                                (self.cell_size - 1) // 2)
-
-
-
 
 
 board = Board()
 screen = pygame.display.set_mode((600, 600))
 running = True
 pygame.display.set_caption("Ludo")
-fps = 10
-clock = pygame.time.Clock()
 rolling = True
+dices = pygame.image.load('dice.png')
+got_rolled = False
+result = 0
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and got_rolled is False:
+                rolling = False
+                got_rolled = True
+                result = 6
+                playersandgame.whoseturn = (playersandgame.whoseturn + 1) % 4
+                print(playersandgame.whoseturn)
+            elif event.key == pygame.K_SPACE and got_rolled is True:
+                rolling = True
+                got_rolled = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print(board.get_click(event.pos))
-    if rolling:
-        dices = pygame.image.load('dice.png')
-        for i in range(clock.tick(fps)):
-            val = randint(0, 5)
-            screen.blit(dices, (275, 500), (val * 54, 0, (val + 1) * 54,  55))
-            pygame.display.flip()
+            print(board.get_click(event.pos, result))
     screen.fill((255, 255, 255))
     board.render(screen)
+    if rolling:
+        result = randint(1, 6)
+        screen.blit(dices, (275, 500), ((result - 1) * 54, 0, 54, 55))
+    else:
+        screen.blit(dices, (275, 500), ((result - 1) * 54, 0, 54, 55))
     pygame.display.flip()

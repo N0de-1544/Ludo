@@ -16,6 +16,10 @@ imboard = [['*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'
            ['*', '*', '*', '*', '*', '*', '*', ' ', ' ', ' ', '*', '*', '*', '*', '*', '*', '*'],
            ['*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*']]
 
+order = ['b', 'r', 'g', 'y']
+colorresppos = {'b': (7, 14), 'r': (14, 9), 'g': (9, 2), 'y': (2, 7)}
+whoseturn = 3
+
 
 class Piece:
     def __init__(self, startpos, color):
@@ -28,10 +32,14 @@ class Piece:
 
     def activate(self):
         self.active = True
+        self.y, self.x = colorresppos[self.color]
+        print('done!' + self.color)
 
     def move(self, tiles):
-        if self.active is False:
+        if self.active is False and tiles < 6:
             return None
+        if self.active is False and tiles == 6:
+            self.activate()
         for i in range(tiles):
             if self.x - 7 > 0 and imboard[self.x][self.y - 1] == ' ':
                 self.y -= 1
@@ -45,6 +53,12 @@ class Piece:
 
     def getpar(self):
         return self.y, self.x, self.color
+
+    def getcolor(self):
+        return self.color
+
+    def getcoords(self):
+        return self.y, self.x
 
 
 players = [Piece((11, 2), 'g'), Piece((11, 5), 'g'), Piece((14, 2), 'g'), Piece((14, 5), 'g'),
