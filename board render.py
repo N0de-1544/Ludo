@@ -55,14 +55,22 @@ class Board:
             for i in range(16):
                 if (cell_coords[0] + 1, cell_coords[1] + 1) == playersandgame.players[i].getcoords():
                     conplayer = i
+                    break
             if (playersandgame.order[playersandgame.whoseturn]
                     == playersandgame.players[conplayer].getcolor()):
-                playersandgame.players[conplayer].move(movement)
-            pass
+                if movement == 6 and playersandgame.players[conplayer].getactstate() is False:
+                    playersandgame.players[conplayer].activate()
+                else:
+                    for i in range(movement):
+                        playersandgame.players[conplayer].move()
+                        self.render(screen)
+                        pygame.display.flip()
+                        pygame.time.delay(50)
+                return True
+            return False
 
     def get_click(self, mouse_pos, movement):
-        self.on_click(self.get_cell(mouse_pos), movement)
-        # return self.get_cell(mouse_pos)
+        return self.on_click(self.get_cell(mouse_pos), movement)
 
     def render(self, scr):
         for i in range(self.height):
@@ -132,7 +140,10 @@ while running:
                 rolling = True
                 got_rolled = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print(board.get_click(event.pos, result))
+            is_correct = board.get_click(event.pos, result)
+            # if is_correct:
+            #     rolling = True
+            #     got_rolled = False
     screen.fill((255, 255, 255))
     board.render(screen)
     if rolling:

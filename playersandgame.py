@@ -33,35 +33,38 @@ class Piece:
     def activate(self):
         self.active = True
         self.y, self.x = colorresppos[self.color]
-        print('done!' + self.color)
 
-    def move(self, tiles):
-        if self.active is False and tiles < 6:
-            return None
-        if self.active is False and tiles == 6:
-            return self.activate()
-        for i in range(tiles):
-            if self.x - 8 >= 0:
-                if imboard[self.y + 1][self.x] == ' ':
-                    self.y += 1
-                else:
-                    if self.y - 8 > 0:
-                        if imboard[self.y][self.x - 1] == ' ':
-                            self.x -= 1
-                    if self.y - 8 < 0:
-                        if imboard[self.y][self.x + 1] == ' ':
-                            self.x += 1
-            if self.x - 8 < 0:
-                if imboard[self.y - 1][self.x] == ' ':
-                    self.y -= 1
-                else:
-                    if self.y - 8 > 0:
-                        if imboard[self.y][self.x - 1] == ' ':
-                            self.x -= 1
-                    if self.y - 8 < 0:
-                        if imboard[self.y][self.x + 1] == ' ':
-                            self.x += 1
-            self.gone_through += 1
+    def move(self):
+        if self.gone_through >= 58:
+            if imboard[self.y + 1][self.x] == '_':
+                self.y += 1
+            if imboard[self.y - 1][self.x] == '_':
+                self.y -= 1
+            if imboard[self.y][self.x + 1] == '_':
+                self.x += 1
+            if imboard[self.y][self.x - 1] == '_':
+                self.x -= 1
+        elif self.x - 8 >= 0:
+            if imboard[self.y + 1][self.x] == ' ':
+                self.y += 1
+            else:
+                if self.y - 8 > 0:
+                    if imboard[self.y][self.x - 1] == ' ':
+                        self.x -= 1
+                elif self.y - 8 < 0:
+                    if imboard[self.y][self.x + 1] == ' ':
+                        self.x += 1
+        elif self.x - 8 < 0:
+            if imboard[self.y - 1][self.x] == ' ':
+                self.y -= 1
+            else:
+                if self.y - 8 > 0:
+                    if imboard[self.y][self.x - 1] == ' ':
+                        self.x -= 1
+                elif self.y - 8 < 0:
+                    if imboard[self.y][self.x + 1] == ' ':
+                        self.x += 1
+        self.gone_through += 1
 
     def getpar(self):
         return self.y, self.x, self.color
@@ -71,6 +74,9 @@ class Piece:
 
     def getcoords(self):
         return self.y, self.x
+
+    def getactstate(self):
+        return self.active
 
 
 players = [Piece((11, 2), 'g'), Piece((11, 5), 'g'), Piece((14, 2), 'g'), Piece((14, 5), 'g'),
