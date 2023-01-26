@@ -2,14 +2,18 @@ import pygame
 from pygame import event
 from math import floor
 from random import randint
-import playersandgame
+from playersandgame import *
 
+
+
+colordict = {'y': (255, 222, 21), 'g': (4, 150, 69),
+                          'b': (18, 149, 231), 'r': (232, 21, 30)}
 
 def getplayersdata(type=0):
     if type == 0:
-        return list(map(lambda x: x.getpar(), playersandgame.players))
+        return list(map(lambda x: x.getpar(), players))
     elif type == 1:
-        return {(i[0], i[1]): i[2] for i in list(map(lambda x: x.getpar(), playersandgame.players))}
+        return {(i[0], i[1]): i[2] for i in list(map(lambda x: x.getpar(), players))}
 
 
 class Board:
@@ -53,19 +57,28 @@ class Board:
         if (cell_coords[0] + 1, cell_coords[1] + 1) in list(map(lambda x: (x[0], x[1]), getplayersdata())):
             conplayer = 0
             for i in range(16):
-                if (cell_coords[0] + 1, cell_coords[1] + 1) == playersandgame.players[i].getcoords():
+                if (cell_coords[0] + 1, cell_coords[1] + 1) == players[i].getcoords():
                     conplayer = i
                     break
-            if (playersandgame.order[playersandgame.whoseturn]
-                    == playersandgame.players[conplayer].getcolor()):
-                if movement == 6 and playersandgame.players[conplayer].getactstate() is False:
-                    playersandgame.players[conplayer].activate()
+            if (order[whoseturn]
+                    == players[conplayer].getcolor()):
+                if movement == 6 and players[conplayer].getactstate() is False:
+                    players[conplayer].activate()
                 else:
                     for i in range(movement):
-                        playersandgame.players[conplayer].move()
+                        players[conplayer].move()
                         self.render(screen)
                         pygame.display.flip()
                         pygame.time.delay(50)
+                    if len(set(filter(lambda x: players[conplayer].getcoords() == (x[0], x[1]),
+                                       [i.getpar() for i in players]))) >= 2:
+                        setofmultpieces = set(filter(lambda x:
+                                                     players[conplayer].getcoords() == x.getcoords(),
+                                                     players))
+                        for i in list(setofmultpieces):
+                            if players[conplayer].getpar() != i.getpar():
+                                i.caught()
+
                 return True
             return False
 
@@ -125,6 +138,7 @@ rolling = True
 dices = pygame.image.load('dice.png')
 got_rolled = False
 result = 0
+pygame.init()
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -133,22 +147,24 @@ while running:
             if event.key == pygame.K_SPACE and got_rolled is False:
                 rolling = False
                 got_rolled = True
-                result = 6
-                playersandgame.whoseturn = (playersandgame.whoseturn + 1) % 4
-                print(playersandgame.whoseturn)
+                result = randint(1, 6)
+                whoseturn = (whoseturn + 1) % 4
             elif event.key == pygame.K_SPACE and got_rolled is True:
                 rolling = True
                 got_rolled = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and got_rolled is True:
             is_correct = board.get_click(event.pos, result)
-            # if is_correct:
-            #     rolling = True
-            #     got_rolled = False
+            if is_correct:
+                rolling = True
+                got_rolled = False
     screen.fill((255, 255, 255))
     board.render(screen)
     if rolling:
         result = randint(1, 6)
         screen.blit(dices, (275, 500), ((result - 1) * 54, 0, 54, 55))
     else:
+        pygame.draw.rect(screen, colordict[order[whoseturn]], (0, 575, 600, 600))
         screen.blit(dices, (275, 500), ((result - 1) * 54, 0, 54, 55))
+    text = pygame.font.SysFont('Corbel', 24).render("Сейчас ходит", True, 'black')
+    screen.blit(text, (240, 575))
     pygame.display.flip()

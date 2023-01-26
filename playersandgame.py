@@ -36,13 +36,13 @@ class Piece:
 
     def move(self):
         if self.gone_through >= 58:
-            if imboard[self.y + 1][self.x] == '_':
+            if self.color == 'y':
                 self.y += 1
-            if imboard[self.y - 1][self.x] == '_':
+            elif self.color == 'r':
                 self.y -= 1
-            if imboard[self.y][self.x + 1] == '_':
+            elif self.color == 'g':
                 self.x += 1
-            if imboard[self.y][self.x - 1] == '_':
+            elif self.color == 'b':
                 self.x -= 1
         elif self.x - 8 >= 0:
             if imboard[self.y + 1][self.x] == ' ':
@@ -65,6 +65,10 @@ class Piece:
                     if imboard[self.y][self.x + 1] == ' ':
                         self.x += 1
         self.gone_through += 1
+
+    def caught(self):
+        self.y, self.x = self.revspot
+        self.active = False
 
     def getpar(self):
         return self.y, self.x, self.color
