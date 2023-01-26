@@ -4,16 +4,44 @@ from math import floor
 from random import randint
 from playersandgame import *
 
-
-
 colordict = {'y': (255, 222, 21), 'g': (4, 150, 69),
-                          'b': (18, 149, 231), 'r': (232, 21, 30)}
+             'b': (18, 149, 231), 'r': (232, 21, 30)}
+
 
 def getplayersdata(type=0):
     if type == 0:
         return list(map(lambda x: x.getpar(), players))
     elif type == 1:
         return {(i[0], i[1]): i[2] for i in list(map(lambda x: x.getpar(), players))}
+
+
+def checkwincondition():
+    allplayers = getplayersdata(type=1)
+    if (8, 13) in allplayers and (8, 12) in allplayers and (8, 11) in allplayers and (8, 10) in allplayers:
+        wintext = pygame.font.SysFont('Arial', 72).render('Синие победили!', True, 'Blue')
+        while True:
+            screen.fill((255, 255, 255))
+            screen.blit(wintext, (300, 300))
+        pass
+    if (8, 6) in allplayers and (8, 5) in allplayers and (8, 4) in allplayers and (8, 3) in allplayers:
+        wintext = pygame.font.SysFont('Arial', 72).render('Зеленые победили!', True, 'Blue')
+        while True:
+            screen.fill((255, 255, 255))
+            screen.blit(wintext, (300, 300))
+        pass
+        # green win
+    if (6, 8) in allplayers and (5, 8) in allplayers and (4, 8) in allplayers and (3, 8) in allplayers:
+        wintext = pygame.font.SysFont('Arial', 72).render('Желтые победили!', True, 'Blue')
+        while True:
+            screen.fill((255, 255, 255))
+            screen.blit(wintext, (300, 300))
+        pass
+    if (13, 8) in allplayers and (12, 8) in allplayers and (11, 8) in allplayers and (10, 8) in allplayers:
+        wintext = pygame.font.SysFont('Arial', 72).render('Красные победили!', True, 'Blue')
+        while True:
+            screen.fill((255, 255, 255))
+            screen.blit(wintext, (300, 300))
+        pass
 
 
 class Board:
@@ -71,7 +99,7 @@ class Board:
                         pygame.display.flip()
                         pygame.time.delay(50)
                     if len(set(filter(lambda x: players[conplayer].getcoords() == (x[0], x[1]),
-                                       [i.getpar() for i in players]))) >= 2:
+                                      [i.getpar() for i in players]))) >= 2:
                         setofmultpieces = set(filter(lambda x:
                                                      players[conplayer].getcoords() == x.getcoords(),
                                                      players))
@@ -168,3 +196,4 @@ while running:
     text = pygame.font.SysFont('Corbel', 24).render("Сейчас ходит", True, 'black')
     screen.blit(text, (240, 575))
     pygame.display.flip()
+    checkwincondition()

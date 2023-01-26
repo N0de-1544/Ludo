@@ -36,13 +36,21 @@ class Piece:
 
     def move(self):
         if self.gone_through >= 58:
-            if self.color == 'y':
+            if (self.color == 'y'
+                    and imboard[self.y + 1][self.x] == '_'
+                    and (self.y + 1, self.x) not in [i.getcoords() for i in players]):
                 self.y += 1
-            elif self.color == 'r':
+            elif (self.color == 'r'
+                  and imboard[self.y - 1][self.x] == '_'
+                  and (self.y - 1, self.x) not in [i.getcoords() for i in players]):
                 self.y -= 1
-            elif self.color == 'g':
+            elif (self.color == 'g'
+                  and imboard[self.y][self.x + 1] == '_'
+                  and (self.y, self.x + 1) not in [i.getcoords() for i in players]):
                 self.x += 1
-            elif self.color == 'b':
+            elif (self.color == 'b'
+                  and imboard[self.y][self.x - 1] == '_'
+                  and (self.y, self.x - 1) not in [i.getcoords() for i in players]):
                 self.x -= 1
         elif self.x - 8 >= 0:
             if imboard[self.y + 1][self.x] == ' ':
@@ -83,6 +91,10 @@ class Piece:
         return self.active
 
 
+# players = [Piece((11, 2), 'g'), Piece((11, 5), 'g'), Piece((14, 2), 'g'), Piece((14, 5), 'g'),
+#            Piece((2, 2), 'y'), Piece((2, 5), 'y'), Piece((5, 2), 'y'), Piece((5, 5), 'y'),
+#            Piece((8, 14), 'b'), Piece((8, 12), 'b'), Piece((8, 11), 'b'), Piece((8, 10), 'b'),
+#            Piece((11, 11), 'r'), Piece((11, 14), 'r'), Piece((14, 11), 'r'), Piece((14, 14), 'r')]
 players = [Piece((11, 2), 'g'), Piece((11, 5), 'g'), Piece((14, 2), 'g'), Piece((14, 5), 'g'),
            Piece((2, 2), 'y'), Piece((2, 5), 'y'), Piece((5, 2), 'y'), Piece((5, 5), 'y'),
            Piece((2, 11), 'b'), Piece((2, 14), 'b'), Piece((5, 11), 'b'), Piece((5, 14), 'b'),
