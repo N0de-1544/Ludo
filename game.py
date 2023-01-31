@@ -93,18 +93,19 @@ class Board:
                 if movement == 6 and players[conplayer].getactstate() is False:
                     players[conplayer].activate()
                 else:
+                    actpl = players[conplayer]
                     for i in range(movement):
-                        players[conplayer].move()
+                        actpl.move()
                         self.render(screen)
                         pygame.display.flip()
                         pygame.time.delay(50)
-                    if len(set(filter(lambda x: players[conplayer].getcoords() == (x[0], x[1]),
+                    if len(set(filter(lambda x: actpl.getcoords() == (x[0], x[1]),
                                       [i.getpar() for i in players]))) >= 2:
                         setofmultpieces = set(filter(lambda x:
-                                                     players[conplayer].getcoords() == x.getcoords(),
+                                                     actpl.getcoords() == x.getcoords(),
                                                      players))
                         for i in list(setofmultpieces):
-                            if players[conplayer].getpar() != i.getpar():
+                            if actpl.getpar() != i.getpar():
                                 i.caught()
 
                 return True
@@ -167,6 +168,8 @@ dices = pygame.image.load('dice.png')
 got_rolled = False
 result = 0
 pygame.init()
+pygame.mixer.init()
+pygame.mixer.music.load("snap.mp3")
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -177,6 +180,7 @@ while running:
                 got_rolled = True
                 result = randint(1, 6)
                 whoseturn = (whoseturn + 1) % 4
+                pygame.mixer.music.play()
             elif event.key == pygame.K_SPACE and got_rolled is True:
                 rolling = True
                 got_rolled = False
